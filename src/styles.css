@@ -13,12 +13,13 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
+  color: #cbd5e0;
 }
 
 ::-webkit-scrollbar-thumb {
