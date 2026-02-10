@@ -1,0 +1,94 @@
+<div class="quiz-display-container">
+  <div *ngIf="isLoading" class="loading-section">
+    <div class="spinner"></div>
+    <p>Generating your quiz questions...</p>
+  </div>
+
+  <div *ngIf="quizResponse && !isLoading" class="quiz-content">
+    <div class="quiz-header">
+      <h3>Generated Quiz</h3>
+      <p class="quiz-meta">
+        {{ quizResponse.totalQuestions }} questions • 
+        Generated on {{ quizResponse.generatedAt | date:'medium' }}
+      </p>
+    </div>
+
+    <form (ngSubmit)="calculateScore()" *ngIf="!showResults">
+      <div *ngFor="let question of quizResponse.questions; let i = index" class="question-card">
+        <div class="question-header">
+          <span class="question-number">Q{{ getQuestionNumber(i) }}</span>
+          <span class="difficulty-badge" [class]="question.difficulty">
+            {{ question.difficulty }}
+          </span>
+          <span class="question-type">{{ question.type | titlecase }}</span>
+        </div>
+
+        <div class="question-text">{{ question.question }}</div>
+
+        <div *ngIf="question.codeSnippet" class="code-snippet">
+          <pre><code>{{ question.codeSnippet }}</code></pre>
+        </div>
+
+        <div *ngIf="question.type === 'mcq'" class="options-container">
+          <label *ngFor="let option of question.options" class="option-label">
+            <input
+              type="radio"
+              [name]="'question_' + question.id"
+              [value]="option"
+              (change)="onAnswerSelect(question.id, option)"
+            >
+            <span class="option-text">{{ option }}</span>
+          </label>
+        </div>
+
+        <div *ngIf="question.type !== 'mcq'" class="answer-input">
+          <textarea
+          title="answer"
+            [placeholder]="'Enter your answer for ' + question.type"
+            (input)="onAnswerSelect(question.id, $any($event.target).value)"
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-quiz-button">Submit Answers</button>
+    </form>
+
+    <!-- Results Section -->
+    <div *ngIf="showResults" class="results-section">
+      <h4>Quiz Results</h4>
+      <div class="score-display">
+        <span class="score">{{ score }}/{{ quizResponse.totalQuestions }}</span>
+        <span class="percentage">
+          ({{ (score / quizResponse.totalQuestions * 100).toFixed(1) }}%)
+        </span>
+      </div>
+
+      <div *ngFor="let question of quizResponse.questions; let i = index" class="result-item">
+        <div class="result-question">
+          <strong>Q{{ getQuestionNumber(i) }}:</strong> {{ question.question }}
+        </div>
+        <div class="answer-comparison">
+          <div class="your-answer">
+            <strong>Your Answer:</strong> {{ selectedAnswers[question.id] || 'Not answered' }}
+          </div>
+          <div class="correct-answer">
+            <strong>Correct Answer:</strong> {{ question.correctAnswer }}
+          </div>
+          <div class="explanation">
+            <strong>Explanation:</strong> {{ question.explanation }}
+          </div>
+        </div>
+        <div 
+          class="result-indicator" 
+          [class.correct]="selectedAnswers[question.id] === question.correctAnswer"
+          [class.incorrect]="selectedAnswers[question.id] !== question.correctAnswer"
+        >
+          {{ selectedAnswers[question.id] === question.correctAnswer ? '✓ Correct' : '✗ Incorrect' }}
+        </div>
+      </div>
+
+      <button (click)="resetQuiz()" class="retry-button">Try Again</button>
+    </div>
+  </div>
+</div>

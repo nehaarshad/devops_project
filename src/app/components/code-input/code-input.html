@@ -1,0 +1,32 @@
+<div class="code-input-container">
+  <h3>Provide Your Code</h3>
+  
+  <div class="input-methods">
+
+    <!-- Manual Input -->
+    <div class="manual-input-section">
+      <div class="language-selection">
+        <label for="language">Programming Language:</label>
+        <select id="language" [(ngModel)]="selectedLanguage" (change)="onLanguageChange()">
+          <option *ngFor="let lang of languages" [value]="lang.value">{{ lang.label }}</option>
+        </select>
+      </div>
+
+      <textarea
+      aria-multiline="true"
+        [(ngModel)]="code"
+        placeholder="Paste your code here..."
+        rows="15"
+        class="code-textarea"
+      ></textarea>
+    </div>
+  </div>
+
+  <button 
+    (click)="onSubmit()" 
+    [disabled]="!code.trim()"
+    class="submit-button"
+  >
+    Use This Code
+  </button>
+</div>

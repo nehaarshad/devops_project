@@ -1,0 +1,45 @@
+<div class="app-container">
+  <header class="app-header">
+    <h1>AI Coding Quiz Generator</h1>
+    <p>Transform your code into interactive learning experiences</p>
+  </header>
+
+  <main class="app-main">
+    <div *ngIf="error" class="error-alert">
+      {{ error }}
+      <button (click)="error = null" class="close-error">×</button>
+    </div>
+
+    <!-- Step 1: Code Input -->
+    <section *ngIf="currentStep === 'input'" class="step-section">
+      <app-code-input (codeSubmitted)="onCodeSubmitted($event)"></app-code-input>
+    </section>
+
+    <!-- Step 2: Quiz Preferences -->
+    <section *ngIf="currentStep === 'preferences'" class="step-section">
+      <div class="step-navigation">
+        <button (click)="currentStep = 'input'" class="back-button">← Back</button>
+        <span class="step-indicator">Step 2 of 3: Set Quiz Preferences</span>
+      </div>
+      <app-quiz-generator 
+        (preferencesSubmitted)="onPreferencesSubmitted($event)"
+      ></app-quiz-generator>
+    </section>
+
+    <!-- Step 3: Quiz Display -->
+    <section *ngIf="currentStep === 'quiz'" class="step-section">
+      <div class="step-navigation">
+        <button (click)="resetApp()" class="back-button">← Start Over</button>
+        <span class="step-indicator">Step 3 of 3: Generated Quiz</span>
+      </div>
+      <app-output-generator
+        [quizResponse]="quizResponse"
+        [isLoading]="isLoading"
+      ></app-output-generator>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Riphah International University - Generative AI</p>
+  </footer>
+</div>
